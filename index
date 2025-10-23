@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+
+"Make something that cannot be owned.",
+"Treat time as glaze.",
+"Cover the piece with darkness, then reveal only what glows.",
+"Create a trace that continues outside the room.",
+"Make two elements that depend on each other to stand.",
+"Let fatigue finish the form.",
+"Write the final title only after seeing it in shadow.",
+"When the work feels complete, ask what still wants to breathe."
+];
+
+// State
+let seen = new Set();
+let currentIndex = null;
+
+const elText = document.getElementById('cardText');
+const elProgress = document.getElementById('progress');
+const elStatus = document.getElementById('status');
+
+function updateProgress(){ elProgress.textContent = `${seen.size} / ${prompts.length}`; }
+
+function pickNewIndex(){
+if(seen.size === prompts.length){
+elStatus.textContent = 'Mazo agotado. Reiniciado automáticamente.';
+seen.clear();
+}
+let idx;
+do{ idx = Math.floor(Math.random()*prompts.length); } while(seen.has(idx) && seen.size < prompts.length);
+return idx;
+}
+
+function show(index){
+currentIndex = index;
+elText.textContent = prompts[index];
+seen.add(index);
+updateProgress();
+history.replaceState(null, '', `#${index}`);
+elStatus.textContent = '';
+}
+
+function draw(){ show(pickNewIndex()); }
+
+// Controls
+document.getElementById('draw').addEventListener('click', draw);
+document.getElementById('reshuffle').addEventListener('click', ()=>{ seen.clear(); elStatus.textContent='Mazo reiniciado.'; updateProgress(); draw(); });
+document.getElementById('copy').addEventListener('click', async ()=>{
+try{ await navigator.clipboard.writeText(location.href); elStatus.textContent='Enlace copiado.'; }
+catch{ elStatus.textContent='No se pudo copiar.'; }
+});
+
+// Theme toggle
+const app = document.getElementById('app');
+document.getElementById('toggle').addEventListener('click', ()=>{
+const next = app.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
+app.setAttribute('data-theme', next);
+localStorage.setItem('theme', next);
+});
+
+// Export JSON
+document.getElementById('exportJSON').addEventListener('click', (e)=>{
+e.preventDefault();
+const blob = new Blob([JSON.stringify(prompts, null, 2)], {type:'application/json'});
+const url = URL.createObjectURL(blob);
+const a = document.createElement('a');
+a.href = url; a.download = 'oblique-100.json'; a.click();
+URL.revokeObjectURL(url);
+});
+
+// Keyboard
+document.addEventListener('keydown', (e)=>{ if(e.code === 'Space'){ e.preventDefault(); draw(); } });
+
+// On load: theme + hash card
+(function init(){
+const savedTheme = localStorage.getItem('theme');
+if(savedTheme) app.setAttribute('data-theme', savedTheme);
+const hash = location.hash.replace('#','');
+const idx = Number.isInteger(+hash) && +hash >=0 && +hash < prompts.length ? +hash : null;
+if(idx !== null){ show(idx); }
+})();
+</script>
+</body>
+</html>
+
