@@ -1,84 +1,146 @@
 <!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Oblique Minimal</title>
+  <style>
+    :root{ --bg:#ffffff; --fg:#000000; --muted:#666; --accent:#000; }
+    html,body{height:100%; margin:0}
+    body{background:var(--bg); color:var(--fg); font-family: Georgia, Cambria, "Times New Roman", Times, serif; display:grid;}
+    .wrap{display:grid; place-items:center; min-height:100vh; padding:24px;}
+    .card{max-width:900px; width:100%; text-align:center;}
+    .text{font-size:clamp(22px,3.2vw,40px); line-height:1.35;}
+    .btn{position:fixed; left:50%; bottom:20px; transform:translateX(-50%); background:transparent; color:var(--fg); border:1px solid var(--fg); border-radius:999px; padding:8px 14px; font-family:inherit; font-size:14px; cursor:pointer}
+    .btn:focus{outline:2px solid var(--fg); outline-offset:3px}
+  </style>
+</head>
+<body>
+  <main class="wrap">
+    <div class="card">
+      <div id="cardText" class="text">Press <strong>new</strong> to draw.</div>
+    </div>
+  </main>
+  <button id="draw" class="btn" title="new">new</button>
+  <script>
+    const prompts = [
+      "Break your favorite rule.",
+      "Work with your eyes closed for one minute.",
+      "Ask the material what it wants to become.",
+      "Do the opposite of your first impulse.",
+      "Leave one thing unfinished on purpose.",
+      "Repeat a gesture until it changes meaning.",
+      "Make something you can’t keep.",
+      "Destroy something gently.",
+      "Work until you no longer recognize what you made.",
+      "Remove the most beautiful part.",
+      "Whisper the title before you begin.",
+      "Use only two movements: one precise, one chaotic.",
+      "Balance something until it falls.",
+      "Imagine you are working underwater.",
+      "Use gravity as a collaborator.",
+      "Stop when you start to like it.",
+      "Translate a feeling into texture.",
+      "Let an accident become the rule.",
+      "Replace measurement with rhythm.",
+      "Cover something precious with something fragile.",
+      "Create for five minutes as if no one will ever see it.",
+      "Hide the center.",
+      "Work as if you had one hour left.",
+      "Trade hands.",
+      "Use silence as material.",
+      "Draw with light instead of line.",
+      "Make something that disappears.",
+      "Work while standing on one foot.",
+      "Name it after a sound.",
+      "Add nothing.",
+      "Turn the mistake into symmetry.",
+      "Let another person decide the next step.",
+      "Reverse cause and effect.",
+      "Make a version that breathes slower.",
+      "Close your studio door and listen for a message.",
+      "Use the color you dislike most.",
+      "Make the piece smaller until it fits in your hand.",
+      "Replace an intention with a question.",
+      "Let a shadow guide the form.",
+      "Imagine it will be found 1,000 years later.",
+      "Let one part stay raw.",
+      "Frame what you would normally throw away.",
+      "Let repetition become trance.",
+      "Use water, time, or air as tools.",
+      "Treat fear as pigment.",
+      "Make something only visible at night.",
+      "Ask: what does this need less of?",
+      "Make the invisible element essential.",
+      "When finished, remove one third.",
+      "Leave a trace for someone else to continue.",
+      "Begin with what hurts.",
+      "Carve fear into pattern.",
+      "Let one void stay visible.",
+      "Work from exhaustion, not inspiration.",
+      "When doubt appears, change scale.",
+      "Speak the word ‘Acapulco’ before touching the material.",
+      "Leave fingerprints as testimony.",
+      "Make a gesture you cannot repeat.",
+      "Sculpt the pause between breaths.",
+      "Treat subtraction as confession.",
+      "When you feel frozen, warm your hands and continue.",
+      "Tilt the piece until it almost collapses.",
+      "Add a form that remembers another form.",
+      "Let water decide direction.",
+      "Don’t fix what gravity ruins.",
+      "Use one fracture as composition.",
+      "Touch material like memory.",
+      "Build connection instead of perfection.",
+      "Say the name of someone you miss and continue working.",
+      "Make the absence speak.",
+      "Let one edge stay too thin.",
+      "Translate panic into texture.",
+      "Work in silence until the sound of your hands becomes rhythm.",
+      "Imagine you are remaking your mother’s gesture.",
+      "Balance the weight of grief with one playful act.",
+      "When the material resists, listen before forcing.",
+      "Polish until you see your reflection, then blur it.",
+      "Hide one secret under glaze.",
+      "Name every crack as if it were a person.",
+      "Assemble parts that don’t fit, and let them stay that way.",
+      "Treat the studio like a temple and a ruin at once.",
+      "Burn something symbolic, keep the ash.",
+      "Make a piece that could drown and still survive.",
+      "Write a letter to the material and seal it inside.",
+      "When the moon is visible, stop shaping and observe.",
+      "Work as if the material dreams.",
+      "Cut through symmetry with a single decisive mark.",
+      "Let one fragment fall and remain on the floor.",
+      "Make a form that invites touch but resists it.",
+      "Choose imperfection as structure.",
+      "Recreate a childhood object without looking at it.",
+      "Use repetition until it becomes prayer.",
+      "Make something that cannot be owned.",
+      "Treat time as glaze.",
+      "Cover the piece with darkness, then reveal only what glows.",
+      "Create a trace that continues outside the room.",
+      "Make two elements that depend on each other to stand.",
+      "Let fatigue finish the form.",
+      "Write the final title only after seeing it in shadow.",
+      "When the work feels complete, ask what still wants to breathe."
+    ];
 
-"Make something that cannot be owned.",
-"Treat time as glaze.",
-"Cover the piece with darkness, then reveal only what glows.",
-"Create a trace that continues outside the room.",
-"Make two elements that depend on each other to stand.",
-"Let fatigue finish the form.",
-"Write the final title only after seeing it in shadow.",
-"When the work feels complete, ask what still wants to breathe."
-];
+    let seen = new Set();
+    const elText = document.getElementById('cardText');
 
-// State
-let seen = new Set();
-let currentIndex = null;
+    function pick(){
+      if(seen.size === prompts.length) seen.clear();
+      let i; do { i = Math.floor(Math.random()*prompts.length); } while(seen.has(i));
+      seen.add(i); return i;
+    }
 
-const elText = document.getElementById('cardText');
-const elProgress = document.getElementById('progress');
-const elStatus = document.getElementById('status');
+    function draw(){ const i = pick(); elText.textContent = prompts[i]; }
 
-function updateProgress(){ elProgress.textContent = `${seen.size} / ${prompts.length}`; }
-
-function pickNewIndex(){
-if(seen.size === prompts.length){
-elStatus.textContent = 'Mazo agotado. Reiniciado automáticamente.';
-seen.clear();
-}
-let idx;
-do{ idx = Math.floor(Math.random()*prompts.length); } while(seen.has(idx) && seen.size < prompts.length);
-return idx;
-}
-
-function show(index){
-currentIndex = index;
-elText.textContent = prompts[index];
-seen.add(index);
-updateProgress();
-history.replaceState(null, '', `#${index}`);
-elStatus.textContent = '';
-}
-
-function draw(){ show(pickNewIndex()); }
-
-// Controls
-document.getElementById('draw').addEventListener('click', draw);
-document.getElementById('reshuffle').addEventListener('click', ()=>{ seen.clear(); elStatus.textContent='Mazo reiniciado.'; updateProgress(); draw(); });
-document.getElementById('copy').addEventListener('click', async ()=>{
-try{ await navigator.clipboard.writeText(location.href); elStatus.textContent='Enlace copiado.'; }
-catch{ elStatus.textContent='No se pudo copiar.'; }
-});
-
-// Theme toggle
-const app = document.getElementById('app');
-document.getElementById('toggle').addEventListener('click', ()=>{
-const next = app.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
-app.setAttribute('data-theme', next);
-localStorage.setItem('theme', next);
-});
-
-// Export JSON
-document.getElementById('exportJSON').addEventListener('click', (e)=>{
-e.preventDefault();
-const blob = new Blob([JSON.stringify(prompts, null, 2)], {type:'application/json'});
-const url = URL.createObjectURL(blob);
-const a = document.createElement('a');
-a.href = url; a.download = 'oblique-100.json'; a.click();
-URL.revokeObjectURL(url);
-});
-
-// Keyboard
-document.addEventListener('keydown', (e)=>{ if(e.code === 'Space'){ e.preventDefault(); draw(); } });
-
-// On load: theme + hash card
-(function init(){
-const savedTheme = localStorage.getItem('theme');
-if(savedTheme) app.setAttribute('data-theme', savedTheme);
-const hash = location.hash.replace('#','');
-const idx = Number.isInteger(+hash) && +hash >=0 && +hash < prompts.length ? +hash : null;
-if(idx !== null){ show(idx); }
-})();
-</script>
+    document.getElementById('draw').addEventListener('click', draw);
+    document.addEventListener('keydown', (e)=>{ if(e.code==='Space'){ e.preventDefault(); draw(); }});
+  </script>
 </body>
 </html>
+
 
