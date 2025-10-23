@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Oblique 100 – Baraja de Instrucciones</title>
+  <meta name="description" content="Baraja digital gratuita con 100 instrucciones creativas. Saca una carta al azar, sin repeticiones, al estilo Oblique Strategies." />
+  <style>
+    :root{
+      --bg:#0f1115; --fg:#e6e8ec; --muted:#9aa3ad; --card:#171a21; --accent:#6dd3ff; --shadow:0 10px 30px rgba(0,0,0,.35);
+      --font: ui-sans-serif, -apple-system, Segoe UI, Roboto, Inter, Helvetica, Arial, system-ui, "Apple Color Emoji", "Segoe UI Emoji";
+    }
+    [data-theme="light"]{ --bg:#f6f7f9; --fg:#111417; --muted:#5b6570; --card:#ffffff; --accent:#005bd1; --shadow:0 10px 30px rgba(0,0,0,.08); }
+    *{box-sizing:border-box}
+    html,body{height:100%}
+    body{margin:0;background:var(--bg);color:var(--fg);font-family:var(--font);display:grid;place-items:center;padding:24px}
+    .app{width:min(900px,100%);display:grid;gap:18px}
+    header{display:flex;justify-content:space-between;align-items:center;gap:12px}
+    h1{font-size:18px;margin:0;font-weight:700;letter-spacing:.2px}
+    .controls{display:flex;flex-wrap:wrap;gap:8px}
+    button{appearance:none;border:1px solid transparent;background:var(--card);color:var(--fg);padding:10px 14px;border-radius:12px;cursor:pointer;box-shadow:var(--shadow);font-weight:600}
+    button:focus{outline:2px solid var(--accent);outline-offset:2px}
+    button.primary{background:var(--accent);color:#001018;border-color:transparent}
+    button.ghost{background:transparent;border-color:#2a2f39}
+    .card{background:var(--card);border-radius:20px;box-shadow:var(--shadow);padding:32px;min-height:240px;display:grid;align-content:center}
+    .text{font-size:clamp(22px,3.6vw,34px);line-height:1.35;letter-spacing:.2px}
+    .meta{display:flex;justify-content:space-between;align-items:center;color:var(--muted);font-size:13px}
+    .footer{display:flex;justify-content:space-between;align-items:center;color:var(--muted);font-size:12px}
+    .toggle{display:inline-flex;align-items:center;gap:8px}
+    a{color:var(--accent);text-decoration:none}
+    @media (max-width:520px){ .text{font-size:20px} button{padding:9px 12px} }
+  </style>
+</head>
+<body>
+  <div class="app" id="app" data-theme="dark">
+    <header>
+      <h1>Oblique 100</h1>
+      <div class="controls">
+        <button id="draw" class="primary" title="Nueva carta (Espacio)">Nueva carta</button>
+        <button id="reshuffle" class="ghost" title="Reiniciar mazo">Reiniciar</button>
+        <button id="copy" class="ghost" title="Copiar enlace a esta carta">Copiar enlace</button>
+        <button id="toggle" class="ghost" title="Cambiar tema">☼/☾</button>
+      </div>
+    </header>
+
+    <section class="card">
+      <div id="cardText" class="text">Pulsa <strong>Nueva carta</strong> o la barra espaciadora.</div>
+    </section>
+
+    <div class="meta">
+      <div>Mazo sin repeticiones • <span id="progress">0 / 100</span></div>
+      <div id="status" aria-live="polite"></div>
+    </div>
+
+    <div class="footer">
+      <div>Inspirado en <em>Oblique Strategies</em> & Yoko Ono. Gratis y sin rastreo.</div>
+      <div><a href="#" id="exportJSON">Exportar JSON</a></div>
+    </div>
+  </div>
+
+  <script>
+    const prompts = [
+      "Break your favorite rule.",
+      "Work with your eyes closed for one minute.",
+      "Ask the material what it wants to become.",
+      "Do the opposite of your first impulse.",
+      "Leave one thing unfinished on purpose.",
+      "Repeat a gesture until it changes meaning.",
+      "Make something you can’t keep.",
+      "Destroy something gently.",
+      "Work until you no longer recognize what you made.",
+      "Remove the most beautiful part.",
+      "Whisper the title before you begin.",
+      "Use only two movements: one precise, one chaotic.",
+      "Balance something until it falls.",
+      "Imagine you are working underwater.",
+      "Use gravity as a collaborator.",
+      "Stop when you start to like it.",
+      "Translate a feeling into texture.",
+      "Let an accident become the rule.",
+      "Replace measurement with rhythm.",
+      "Cover something precious with something fragile.",
+      "Create for five minutes as if no one will ever see it.",
+      "Hide the center.",
+      "Work as if you had one hour left.",
+      "Trade hands.",
+      "Use silence as material.",
+      "Draw with light instead of line.",
+      "Make something that disappears.",
+      "Work while standing on one foot.",
+      "Name it after a sound.",
+      "Add nothing.",
+      "Turn the mistake into symmetry.",
+      "Let another person decide the next step.",
+      "Reverse cause and effect.",
+      "Make a version that breathes slower.",
+      "Close your studio door and listen for a message.",
+      "Use the color you dislike most.",
+      "Make the piece smaller until it fits in your hand.",
+      "Replace an intention with a question.",
+      "Let a shadow guide the form.",
+      "Imagine it will be found 1,000 years later.",
+      "Let one part stay raw.",
+      "Frame what you would normally throw away.",
+      "Let repetition become trance.",
+      "Use water, time, or air as tools.",
+      "Treat fear as pigment.",
+      "Make something only visible at night.",
+      "Ask: what does this need less of?",
+      "Make the invisible element essential.",
+      "When finished, remove one third.",
+      "Leave a trace for someone else to continue.",
+      "Begin with what hurts.",
+      "Carve fear into pattern.",
+      "Let one void stay visible.",
+      "Work from exhaustion, not inspiration.",
+      "When doubt appears, change scale.",
+      "Speak the word ‘Acapulco’ before touching the material.",
+      "Leave fingerprints as testimony.",
+      "Make a gesture you cannot repeat.",
+      "Sculpt the pause between breaths.",
+      "Treat subtraction as confession.",
+      "When you feel frozen, warm your hands and continue.",
+      "Tilt the piece until it almost collapses.",
+      "Add a form that remembers another form.",
+      "Let water decide direction.",
+      "Don’t fix what gravity ruins.",
+      "Use one fracture as composition.",
+      "Touch material like memory.",
+      "Build connection instead of perfection.",
+      "Say the name of someone you miss and continue working.",
+      "Make the absence speak.",
+      "Let one edge stay too thin.",
+      "Translate panic into texture.",
+      "Work in silence until the sound of your hands becomes rhythm.",
+      "Imagine you are remaking your mother’s gesture.",
+      "Balance the weight of grief with one playful act.",
+      "When the material resists, listen before forcing.",
+      "Polish until you see your reflection, then blur it.",
+      "Hide one secret under glaze.",
+      "Name every crack as if it were a person.",
+      "Assemble parts that don’t fit, and let them stay that way.",
+      "Treat the studio like a temple and a ruin at once.",
+      "Burn something symbolic, keep the ash.",
+      "Make a piece that could drown and still survive.",
+      "Write a letter to the material and seal it inside.",
+      "When the moon is visible, stop shaping and observe.",
+      "Work as if the material dreams.",
+      "Cut through symmetry with a single decisive mark.",
+      "Let one fragment fall and remain on the floor.",
+      "Make a form that invites touch but resists it.",
+      "Choose imperfection as structure.",
+      "Recreate a childhood object without looking at it.",
+      "Use repetition until it becomes prayer.",
+      "Make something that cannot be owned.",
+      "Treat time as glaze.",
+      "Cover the piece with darkness, then reveal only what glows.",
+      "Create a trace that continues outside the room.",
+      "Make two elements that depend on each other to stand.",
+      "Let fatigue finish the form.",
+      "Write the final title only after seeing it in shadow.",
+      "When the work feels complete, ask what still wants to breathe."
+    ];
+
+    // State
+    let seen = new Set();
+    let currentIndex = null;
+
+    const elText = document.getElementById('cardText');
+    const elProgress = document.getElementById('progress');
+    const elStatus = document.getElementById('status');
+
+    function updateProgress(){ elProgress.textContent = `${seen.size} / ${prompts.length}`; }
+
+    function pickNewIndex(){
+      if(seen.size === prompts.length){
+        elStatus.textContent = 'Mazo agotado. Reiniciado automáticamente.';
+        seen.clear();
+      }
+      let idx;
+      do{ idx = Math.floor(Math.random()*prompts.length); } while(seen.has(idx) && seen.size < prompts.length);
+      return idx;
+    }
+
+    function show(index){
+      currentIndex = index;
+      elText.textContent = prompts[index];
+      seen.add(index);
+      updateProgress();
+      history.replaceState(null, '', `#${index}`);
+      elStatus.textContent = '';
+    }
+
+    function draw(){ show(pickNewIndex()); }
+
+    // Controls
+    document.getElementById('draw').addEventListener('click', draw);
+    document.getElementById('reshuffle').addEventListener('click', ()=>{ seen.clear(); elStatus.textContent='Mazo reiniciado.'; updateProgress(); draw(); });
+    document.getElementById('copy').addEventListener('click', async ()=>{
+      try{ await navigator.clipboard.writeText(location.href); elStatus.textContent='Enlace copiado.'; }
+      catch{ elStatus.textContent='No se pudo copiar.'; }
+    });
+
+    // Theme toggle
+    const app = document.getElementById('app');
+    document.getElementById('toggle').addEventListener('click', ()=>{
+      const next = app.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
+      app.setAttribute('data-theme', next);
+      localStorage.setItem('theme', next);
+    });
+
+    // Export JSON
+    document.getElementById('exportJSON').addEventListener('click', (e)=>{
+      e.preventDefault();
+      const blob = new Blob([JSON.stringify(prompts, null, 2)], {type:'application/json'});
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url; a.download = 'oblique-100.json'; a.click();
+      URL.revokeObjectURL(url);
+    });
+
+    // Keyboard
+    document.addEventListener('keydown', (e)=>{ if(e.code === 'Space'){ e.preventDefault(); draw(); } });
+
+    // On load: theme + hash card
+    (function init(){
+      const savedTheme = localStorage.getItem('theme');
+      if(savedTheme) app.setAttribute('data-theme', savedTheme);
+      const hash = location.hash.replace('#','');
+      const idx = Number.isInteger(+hash) && +hash >=0 && +hash < prompts.length ? +hash : null;
+      if(idx !== null){ show(idx); }
+    })();
+  </script>
+</body>
+</html>
