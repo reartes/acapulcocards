@@ -1,64 +1,59 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Studio Prompts</title>
-  <style>
-    body {
-      margin: 0;
-      background: #F2EEE9;
-      color: #000;
-      font-family: Futura, "Avenir Next", Avenir, "Helvetica Neue", Helvetica, Arial, sans-serif;
-      display: grid;
-      place-items: center;
-      min-height: 100vh;
-    }
-    .text {
-      display: grid;
-      justify-items: center;
-      text-align: center;
-      gap: 40px; /* more space between parts */
-      padding: 40px;
-      max-width: 900px;
-    }
-    .lead {
-      font-size: 12pt;
-      font-weight: 400;
-      text-transform: none;
-      letter-spacing: 0.02em;
-    }
-    .instr {
-      font-size: clamp(32px, 4vw, 54px);
-      font-weight: 700;
-      text-transform: uppercase;
-      line-height: 1.1;
-    }
-    .explain {
-      font-size: 16px;
-      color: #4d4d4d;
-      font-weight: 400;
-      max-width: 800px;
-      line-height: 1.4;
-    }
-    button {
-      position: fixed;
-      left: 50%;
-      bottom: 30px;
-      transform: translateX(-50%);
-      background: transparent;
-      border: 1px solid #000;
-      border-radius: 999px;
-      padding: 8px 16px;
-      cursor: pointer;
-      font-family: inherit;
-      font-size: 14px;
-    }
-    button:focus {
-      outline: 2px solid #000;
-      outline-offset: 3px;
-    }
-  </style>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Studio Prompts</title>
+<style>
+  :root{
+    --bg:#F2EEE9; --fg:#000; --muted:#4d4d4d;
+    --track:0.08em;               /* global tracking ≈ double */
+    --gap:80px;                    /* double vertical spacing */
+  }
+  html,body{height:100%;margin:0}
+  body{
+    background:var(--bg); color:var(--fg);
+    font-family:Futura,"Avenir Next",Avenir,"Helvetica Neue",Helvetica,Arial,sans-serif;
+    letter-spacing:var(--track);   /* apply tracking to all */
+    display:grid; place-items:center; min-height:100vh;
+  }
+  .text{
+    display:grid; justify-items:center; text-align:center;
+    gap:var(--gap); padding:var(--gap) 28px; max-width:900px;
+  }
+  .lead{
+    font-size:14pt;                /* 14 pt */
+    font-weight:400; text-transform:none;
+    line-height:1.35;
+  }
+  .instr{
+    font-size:clamp(30px,7vw,60px);/* large */
+    font-weight:400;               /* regular (not bold) */
+    text-transform:uppercase;
+    line-height:1.12;
+    letter-spacing:calc(var(--track) * 1.5); /* a bit more for caps */
+  }
+  .explain{
+    font-size:clamp(14px,3.8vw,18px);
+    color:var(--muted); font-weight:400; line-height:1.5; max-width:800px;
+  }
+  button{
+    position:fixed; left:50%; bottom:30px; transform:translateX(-50%);
+    background:transparent; color:var(--fg);
+    border:1px solid var(--fg); border-radius:999px;
+    padding:12px 22px;             /* larger touch target */
+    font-family:inherit; font-size:16px; letter-spacing:var(--track);
+    cursor:pointer;
+  }
+  button:focus{outline:2px solid var(--fg); outline-offset:3px}
+
+  /* Mobile refinements */
+  @media (max-width:520px){
+    :root{ --gap:64px; --track:0.07em; }
+    .text{ padding:56px 20px; }
+    button{ bottom:22px; padding:12px 20px; font-size:15px; }
+  }
+</style>
 </head>
 <body>
   <main class="text" id="card">
@@ -68,26 +63,31 @@
   </main>
   <button id="btn">new</button>
 
-  <script>
-    (function(){
-      var prompts=[
-        {lead:"ask refusal", instr:"ask the material what it refuses", explain:"resistance reveals the form's boundary"},
-        {lead:"repeat until you disappear", instr:"let repetition become trance", explain:"when rhythm replaces intention, the work begins to breathe"},
-        {lead:"begin at the edge", instr:"begin at the edge, not the center", explain:"edges invite decisions; centers hide them"},
-        {lead:"invite the body", instr:"invite the body before the mind", explain:"understanding arrives through weight, balance, and reach"},
-        {lead:"space will finish", instr:"let space finish the sentence", explain:"leave a gap and let the room write the rest"}
-      ];
-      var seen={}, card=document.getElementById('card'), btn=document.getElementById('btn');
-      function pick(){ if(Object.keys(seen).length===prompts.length) seen={}; var i; do{i=Math.floor(Math.random()*prompts.length);}while(seen[i]); seen[i]=1; return i; }
-      function draw(){
-        var p=prompts[pick()];
-        card.innerHTML='<div class="lead">'+p.lead+'</div>'
-                      +'<div class="instr">'+p.instr+'</div>'
-                      +'<div class="explain">'+p.explain.toLowerCase()+'</div>';
-      }
-      btn.addEventListener('click',draw);
-      document.addEventListener('keydown',function(e){ if(e.code==='Space'){ e.preventDefault(); draw(); }});
-    })();
-  </script>
+<script>
+(function(){
+  var prompts=[
+    {lead:"ask refusal", instr:"ask the material what it refuses", explain:"resistance reveals the form's boundary"},
+    {lead:"repeat until you disappear", instr:"let repetition become trance", explain:"when rhythm replaces intention, the work begins to breathe"},
+    {lead:"begin at the edge", instr:"begin at the edge, not the center", explain:"edges invite decisions; centers hide them"},
+    {lead:"invite the body", instr:"invite the body before the mind", explain:"understanding arrives through weight, balance, and reach"},
+    {lead:"space will finish", instr:"let space finish the sentence", explain:"leave a gap and let the room write the rest"}
+  ];
+  var seen={}, card=document.getElementById('card'), btn=document.getElementById('btn');
+  function pick(){
+    if(Object.keys(seen).length===prompts.length) seen={};
+    var i; do{i=Math.floor(Math.random()*prompts.length);}while(seen[i]); seen[i]=1; return i;
+  }
+  function draw(){
+    var p=prompts[pick()];
+    card.innerHTML =
+      '<div class="lead">'+p.lead+'</div>'+
+      '<div class="instr">'+p.instr.toUpperCase()+'</div>'+
+      '<div class="explain">'+p.explain.toLowerCase()+'</div>';
+  }
+  btn.addEventListener('click',draw);
+  document.addEventListener('keydown',function(e){ if(e.code==='Space'){ e.preventDefault(); draw(); }});
+})();
+</script>
 </body>
 </html>
+
