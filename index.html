@@ -1,104 +1,97 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Studio Prompts</title>
   <style>
-    :root{
-      --bg:#F2EEE9;
-      --fg:#000000;
-      --muted:#4d4d4d;
+    body {
+      margin: 0;
+      background: #F2EEE9;
+      color: #000;
+      font-family: Futura, "Avenir Next", Avenir, "Helvetica Neue", Helvetica, Arial, sans-serif;
+      display: grid;
+      place-items: center;
+      min-height: 100vh;
     }
-    html,body{height:100%;margin:0}
-    body{
-      background:var(--bg);
-      color:var(--fg);
-      font-family:Futura, "Avenir Next", Avenir, "Helvetica Neue", Helvetica, Arial, sans-serif;
-      display:grid;
-      place-items:center;
+    .text {
+      display: grid;
+      justify-items: center;
+      text-align: center;
+      gap: 40px; /* more space between parts */
+      padding: 40px;
+      max-width: 900px;
     }
-    .wrap{display:grid;place-items:center;min-height:100vh;padding:24px;}
-    .text{display:grid;gap:14px;justify-items:center;text-align:center;}
-    .lead{font-size:clamp(16px,1.8vw,22px);text-transform:uppercase;letter-spacing:0.05em;}
-    .instr{font-size:clamp(28px,4.2vw,48px);font-weight:700;max-width:900px;line-height:1.2;}
-    .explain{color:var(--muted);font-size:clamp(14px,1.8vw,18px);max-width:900px;text-align:center;}
-    .btn{
-      position:fixed;left:50%;bottom:20px;transform:translateX(-50%);
-      background:transparent;color:var(--fg);
-      border:1px solid var(--fg);border-radius:999px;
-      padding:8px 14px;font-size:14px;cursor:pointer;
-      font-family:inherit;
+    .lead {
+      font-size: 12pt;
+      font-weight: 400;
+      text-transform: none;
+      letter-spacing: 0.02em;
     }
-    .btn:focus{outline:2px solid var(--fg);outline-offset:3px}
+    .instr {
+      font-size: clamp(32px, 4vw, 54px);
+      font-weight: 700;
+      text-transform: uppercase;
+      line-height: 1.1;
+    }
+    .explain {
+      font-size: 16px;
+      color: #4d4d4d;
+      font-weight: 400;
+      max-width: 800px;
+      line-height: 1.4;
+    }
+    button {
+      position: fixed;
+      left: 50%;
+      bottom: 30px;
+      transform: translateX(-50%);
+      background: transparent;
+      border: 1px solid #000;
+      border-radius: 999px;
+      padding: 8px 16px;
+      cursor: pointer;
+      font-family: inherit;
+      font-size: 14px;
+    }
+    button:focus {
+      outline: 2px solid #000;
+      outline-offset: 3px;
+    }
   </style>
 </head>
 <body>
-  <main class="wrap">
-    <div id="cardText" class="text">
-      <div class="lead">press <strong>new</strong> to draw</div>
-      <div class="instr">&nbsp;</div>
-      <div class="explain">&nbsp;</div>
-    </div>
+  <main class="text" id="card">
+    <div class="lead">press <b>new</b> to draw</div>
+    <div class="instr">&nbsp;</div>
+    <div class="explain">&nbsp;</div>
   </main>
-  <button id="draw" class="btn">new</button>
+  <button id="btn">new</button>
 
   <script>
-    const prompts = [
-      {lead:"let touch complete its vision", instr:"allow the work to be carried", explain:"when art moves between bodies, it becomes shared memory"},
-      {lead:"repeat until you disappear", instr:"let repetition become trance", explain:"when rhythm replaces intention, the work begins to breathe"},
-      {lead:"begin at the edge", instr:"begin at the edge, not the center", explain:"edges invite decisions; centers hide them"},
-      {lead:"invite the body", instr:"invite the body before the mind", explain:"understanding arrives through weight, balance, and reach"},
-      {lead:"space will finish", instr:"let space finish the sentence", explain:"leave a gap and let the room write the rest"},
-      {lead:"stretch the instant", instr:"stretch time: make the work unfold", explain:"slow sequences allow noticing to accumulate"},
-      {lead:"compose for walking", instr:"compose for someone walking past", explain:"movement is part of the reading"},
-      {lead:"ask refusal", instr:"ask the material what it refuses", explain:"resistance reveals the form's boundary"},
-      {lead:"crown the error", instr:"return to the first mistake and crown it", explain:"a visible fault can organize the whole"},
-      {lead:"evidence of hands", instr:"leave one seam visible", explain:"process is credibility"}
-      // ...you can keep adding up to 100 objects in the same format
-    ];
-
-    let seen = new Set();
-
-    function pick(){
-      if(seen.size === prompts.length) seen.clear();
-      let i;
-      do { i = Math.floor(Math.random()*prompts.length); }
-      while(seen.has(i));
-      seen.add(i);
-      return i;
-    }
-
-    function draw(){
-      const i = pick();
-      const item = prompts[i];
-      const container = document.getElementById('cardText');
-      container.innerHTML = '';
-
-      const lead = document.createElement('div');
-      lead.className = 'lead';
-      lead.textContent = item.lead;
-
-      const instr = document.createElement('div');
-      instr.className = 'instr';
-      instr.textContent = item.instr;
-
-      const explain = document.createElement('div');
-      explain.className = 'explain';
-      explain.textContent = item.explain.toLowerCase();
-
-      container.appendChild(lead);
-      container.appendChild(instr);
-      container.appendChild(explain);
-    }
-
-    document.getElementById('draw').addEventListener('click', draw);
-    document.addEventListener('keydown', (e)=>{
-      if(e.code==='Space'){ e.preventDefault(); draw(); }
-    });
+    (function(){
+      var prompts=[
+        {lead:"ask refusal", instr:"ask the material what it refuses", explain:"resistance reveals the form's boundary"},
+        {lead:"repeat until you disappear", instr:"let repetition become trance", explain:"when rhythm replaces intention, the work begins to breathe"},
+        {lead:"begin at the edge", instr:"begin at the edge, not the center", explain:"edges invite decisions; centers hide them"},
+        {lead:"invite the body", instr:"invite the body before the mind", explain:"understanding arrives through weight, balance, and reach"},
+        {lead:"space will finish", instr:"let space finish the sentence", explain:"leave a gap and let the room write the rest"}
+      ];
+      var seen={}, card=document.getElementById('card'), btn=document.getElementById('btn');
+      function pick(){ if(Object.keys(seen).length===prompts.length) seen={}; var i; do{i=Math.floor(Math.random()*prompts.length);}while(seen[i]); seen[i]=1; return i; }
+      function draw(){
+        var p=prompts[pick()];
+        card.innerHTML='<div class="lead">'+p.lead+'</div>'
+                      +'<div class="instr">'+p.instr+'</div>'
+                      +'<div class="explain">'+p.explain.toLowerCase()+'</div>';
+      }
+      btn.addEventListener('click',draw);
+      document.addEventListener('keydown',function(e){ if(e.code==='Space'){ e.preventDefault(); draw(); }});
+    })();
   </script>
 </body>
 </html>
+
 
 
 
