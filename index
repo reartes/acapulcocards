@@ -407,13 +407,23 @@
       seen.add(i); return i;
     }
 
-    function draw(){ const i = pick(); elText.textContent = prompts[i]; }
+    function draw(){
+  const i = pick();
+  const item = prompts[i];
+  const container = document.getElementById('cardText');
+  container.innerHTML = '';
+  const lead = document.createElement('div'); lead.className='lead'; lead.textContent = item.lead;
+  const instr = document.createElement('div'); instr.className='instr'; instr.style.fontSize='clamp(28px,4.2vw,48px)'; instr.style.fontWeight='700'; instr.textContent = item.instr;
+  const explain = document.createElement('div'); explain.className='explain'; explain.style.color='var(--muted)'; explain.style.maxWidth='900px'; explain.style.textAlign='center'; explain.style.fontSize='clamp(14px,1.8vw,18px)'; explain.textContent = item.explain.toLowerCase();
+  container.appendChild(lead); container.appendChild(instr); container.appendChild(explain);
+}
 
     document.getElementById('draw').addEventListener('click', draw);
     document.addEventListener('keydown', (e)=>{ if(e.code==='Space'){ e.preventDefault(); draw(); }});
   </script>
 </body>
 </html>
+
 
 
 
