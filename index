@@ -1,30 +1,94 @@
-<!DOCTYPE html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Test</title>
-<style>
-  body{margin:0;background:#F2EEE9;color:#000;font-family:Futura,"Avenir Next",Avenir,"Helvetica Neue",Helvetica,Arial,sans-serif;display:grid;place-items:center;min-height:100vh}
-  .text{display:grid;gap:12px;justify-items:center;text-align:center}
-  .lead{font-size:20px;text-transform:uppercase;letter-spacing:.05em}
-  .instr{font-size:40px;font-weight:700;line-height:1.2;max-width:900px}
-  .explain{font-size:16px;color:#4d4d4d;max-width:900px}
-  button{position:fixed;left:50%;bottom:20px;transform:translateX(-50%);background:transparent;border:1px solid #000;border-radius:999px;padding:8px 14px;cursor:pointer}
-</style></head><body>
-<main class="text" id="card"><div class="lead">press <b>new</b> to draw</div><div class="instr"> </div><div class="explain"> </div></main>
-<button id="btn">new</button>
-<script>
-  (function(){
-    var prompts=[
-      {lead:"let touch complete its vision", instr:"allow the work to be carried", explain:"when art moves between bodies, it becomes shared memory"},
-      {lead:"repeat until you disappear", instr:"let repetition become trance", explain:"when rhythm replaces intention, the work begins to breathe"},
-      {lead:"begin at the edge", instr:"begin at the edge, not the center", explain:"edges invite decisions; centers hide them"},
-      {lead:"invite the body", instr:"invite the body before the mind", explain:"understanding arrives through weight, balance, and reach"},
-      {lead:"space will finish", instr:"let space finish the sentence", explain:"leave a gap and let the room write the rest"}
-    ];
-    var seen={}, card=document.getElementById('card'), btn=document.getElementById('btn');
-    function pick(){ if(Object.keys(seen).length===prompts.length) seen={}; var i; do{i=Math.floor(Math.random()*prompts.length);}while(seen[i]); seen[i]=1; return i; }
-    function draw(){
-      var p=prompts[pick()];
-      card.innerHTML='<div class="lead">'+p.lead+'</div><div class="instr">'+p.instr+'</div><div class="explain">'+p.explain.toLowerCase()+'</div>';
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Studio Prompts</title>
+  <style>
+    body {
+      margin: 0;
+      background: #F2EEE9;
+      color: #000;
+      font-family: Futura, "Avenir Next", Avenir, "Helvetica Neue", Helvetica, Arial, sans-serif;
+      display: grid;
+      place-items: center;
+      min-height: 100vh;
     }
-    btn.addEventListener('click',draw);
-    document.addEventListener('keydown',function(e){ if(e.code==='Space'){ e.preventDefault(); draw(); }});
-  })();
-</script></body></html>
+    .text {
+      display: grid;
+      justify-items: center;
+      text-align: center;
+      gap: 40px; /* more space between parts */
+      padding: 40px;
+      max-width: 900px;
+    }
+    .lead {
+      font-size: 12pt;
+      font-weight: 400;
+      text-transform: none;
+      letter-spacing: 0.02em;
+    }
+    .instr {
+      font-size: clamp(32px, 4vw, 54px);
+      font-weight: 700;
+      text-transform: uppercase;
+      line-height: 1.1;
+    }
+    .explain {
+      font-size: 16px;
+      color: #4d4d4d;
+      font-weight: 400;
+      max-width: 800px;
+      line-height: 1.4;
+    }
+    button {
+      position: fixed;
+      left: 50%;
+      bottom: 30px;
+      transform: translateX(-50%);
+      background: transparent;
+      border: 1px solid #000;
+      border-radius: 999px;
+      padding: 8px 16px;
+      cursor: pointer;
+      font-family: inherit;
+      font-size: 14px;
+    }
+    button:focus {
+      outline: 2px solid #000;
+      outline-offset: 3px;
+    }
+  </style>
+</head>
+<body>
+  <main class="text" id="card">
+    <div class="lead">press <b>new</b> to draw</div>
+    <div class="instr">&nbsp;</div>
+    <div class="explain">&nbsp;</div>
+  </main>
+  <button id="btn">new</button>
+
+  <script>
+    (function(){
+      var prompts=[
+        {lead:"ask refusal", instr:"ask the material what it refuses", explain:"resistance reveals the form's boundary"},
+        {lead:"repeat until you disappear", instr:"let repetition become trance", explain:"when rhythm replaces intention, the work begins to breathe"},
+        {lead:"begin at the edge", instr:"begin at the edge, not the center", explain:"edges invite decisions; centers hide them"},
+        {lead:"invite the body", instr:"invite the body before the mind", explain:"understanding arrives through weight, balance, and reach"},
+        {lead:"space will finish", instr:"let space finish the sentence", explain:"leave a gap and let the room write the rest"}
+      ];
+      var seen={}, card=document.getElementById('card'), btn=document.getElementById('btn');
+      function pick(){ if(Object.keys(seen).length===prompts.length) seen={}; var i; do{i=Math.floor(Math.random()*prompts.length);}while(seen[i]); seen[i]=1; return i; }
+      function draw(){
+        var p=prompts[pick()];
+        card.innerHTML='<div class="lead">'+p.lead+'</div>'
+                      +'<div class="instr">'+p.instr+'</div>'
+                      +'<div class="explain">'+p.explain.toLowerCase()+'</div>';
+      }
+      btn.addEventListener('click',draw);
+      document.addEventListener('keydown',function(e){ if(e.code==='Space'){ e.preventDefault(); draw(); }});
+    })();
+  </script>
+</body>
+</html>
+
