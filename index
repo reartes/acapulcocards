@@ -7,7 +7,7 @@
 <style>
   :root{
     --bg:#F2EEE9; --fg:#000; --muted:#4d4d4d;
-    --track:0.08em; --gap:80px;
+    --track:0.068em; --gap:80px; /* 15% tighter tracking */
   }
   html,body{height:100%;margin:0}
   body{
@@ -32,16 +32,20 @@
   }
   button{
     position:fixed; left:50%; bottom:30px; transform:translateX(-50%);
-    background:transparent; color:var(--fg);
-    border:1px solid var(--fg); border-radius:999px;
-    padding:12px 22px; font-family:inherit; font-size:16px;
+    background:#fff; color:#000;
+    border:1px solid #000; border-radius:999px;
+    padding:12px 32px; font-family:inherit; font-size:16px;
     letter-spacing:var(--track); cursor:pointer;
+    transition:all 0.3s ease;
+  }
+  button:hover{
+    background:#000; color:#fff; border-color:#000;
   }
   button:focus{outline:2px solid var(--fg); outline-offset:3px}
   @media (max-width:520px){
-    :root{ --gap:64px; --track:0.07em; }
+    :root{ --gap:64px; --track:0.06em; }
     .text{ padding:56px 20px; }
-    button{ bottom:22px; padding:12px 20px; font-size:15px; }
+    button{ bottom:22px; padding:12px 24px; font-size:15px; }
   }
 </style>
 </head>
@@ -50,12 +54,11 @@
     <div class="instr">&nbsp;</div>
     <div class="explain">&nbsp;</div>
   </main>
-  <button id="btn">new</button>
+  <button id="btn">shuffle</button>
 
 <script>
 (function(){
-  // Full deck: add more if you like. Each has a short explanation.
-  var prompts = [
+  const prompts = [
     {instr:"BEGIN AT THE EDGE, NOT THE CENTER", explain:"edges force decisions; centers hide them"},
     {instr:"WRITE INSTRUCTIONS FOR HOW TO WAIT HERE", explain:"waiting is part of the choreography"},
     {instr:"REPLACE MASTERY WITH ATTENTION", explain:"notice more than you control"},
@@ -128,37 +131,35 @@
     {instr:"TEACH THE PIECE TO SAY: I AM STILL BECOMING", explain:"leave room for future growth"}
   ];
 
-  var used = new Set();
-  var card = document.getElementById('card');
-  var btn = document.getElementById('btn');
+  let used = new Set();
+  const card = document.getElementById('card');
+  const btn = document.getElementById('btn');
 
   function pick(){
-    if(prompts.length === 0) return null;
-    if(used.size === prompts.length) used.clear(); // full run done → reshuffle
-    var i;
+    if(used.size === prompts.length) used.clear();
+    let i;
     do { i = Math.floor(Math.random()*prompts.length); } while(used.has(i));
     used.add(i);
     return prompts[i];
   }
 
   function draw(){
-    var p = pick();
-    if(!p) return;
+    const p = pick();
     card.innerHTML =
-      '<div class="instr">'+ (p.instr||'').toUpperCase() +'</div>'+
-      '<div class="explain">'+ String(p.explain||'').toLowerCase() +'</div>';
+      `<div class="instr">${p.instr}</div>`+
+      `<div class="explain">${p.explain}</div>`;
   }
 
-  // init
   draw();
   btn.addEventListener('click', draw);
-  document.addEventListener('keydown', function(e){
+  document.addEventListener('keydown', e=>{
     if(e.code==='Space' || e.key==='Tab'){ e.preventDefault(); draw(); }
   });
 })();
 </script>
 </body>
 </html>
+
 
 
 
