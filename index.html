@@ -7,7 +7,7 @@
 <style>
   :root{
     --bg:#F2EEE9; --fg:#000; --muted:#4d4d4d;
-    --track:0.068em; --gap:80px; /* 15% tighter tracking */
+    --track:0.068em; --gap:80px;
   }
   html,body{height:100%;margin:0}
   body{
@@ -32,14 +32,14 @@
   }
   button{
     position:fixed; left:50%; bottom:30px; transform:translateX(-50%);
-    background:#fff; color:#000;
-    border:1px solid #000; border-radius:999px;
+    background:#F2EEE9; color:#000;
+    border:1px solid #000; border-radius:0;
     padding:12px 32px; font-family:inherit; font-size:16px;
     letter-spacing:var(--track); cursor:pointer;
     transition:all 0.3s ease;
   }
   button:hover{
-    background:#000; color:#fff; border-color:#000;
+    background:#000; color:#F2EEE9; border-color:#000;
   }
   button:focus{outline:2px solid var(--fg); outline-offset:3px}
   @media (max-width:520px){
@@ -159,6 +159,7 @@
 </script>
 </body>
 </html>
+
 
 
 
