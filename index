@@ -30,7 +30,6 @@
     color:var(--muted); font-weight:400; line-height:1.5; max-width:800px;
     text-transform:none; letter-spacing:var(--track);
   }
-  .progress{font-size:12px; color:#0009; letter-spacing:.06em}
   button{
     position:fixed; left:50%; bottom:30px; transform:translateX(-50%);
     background:transparent; color:var(--fg);
@@ -50,40 +49,95 @@
   <main class="text" id="card">
     <div class="instr">&nbsp;</div>
     <div class="explain">&nbsp;</div>
-    <div class="progress" id="progress">0 / 0</div>
   </main>
   <button id="btn">new</button>
 
 <script>
 (function(){
-  /* REPLACE THIS ARRAY WITH YOUR FULL LIST (100/300) */
+  // Full deck: add more if you like. Each has a short explanation.
   var prompts = [
-    {instr:"ASK THE MATERIAL WHAT IT REFUSES", explain:"resistance reveals the form's boundary"},
-    {instr:"LET REPETITION BECOME TRANCE", explain:"when rhythm replaces intention, the work begins to breathe"},
-    {instr:"BEGIN AT THE EDGE, NOT THE CENTER", explain:"edges invite decisions; centers hide them"},
-    {instr:"INVITE THE BODY BEFORE THE MIND", explain:"understanding arrives through weight, balance, and reach"},
-    {instr:"LET SPACE FINISH THE SENTENCE", explain:"leave a gap and let the room write the rest"}
-    /* ← paste all remaining items here, format:
-       {instr:"YOUR INSTRUCTION IN ALL CAPS", explain:"your lowercase explanation"},
-    */
+    {instr:"BEGIN AT THE EDGE, NOT THE CENTER", explain:"edges force decisions; centers hide them"},
+    {instr:"WRITE INSTRUCTIONS FOR HOW TO WAIT HERE", explain:"waiting is part of the choreography"},
+    {instr:"REPLACE MASTERY WITH ATTENTION", explain:"notice more than you control"},
+    {instr:"LET PATIENCE BE THE LOUDEST COLOR", explain:"time becomes the hue everyone feels"},
+    {instr:"ASK: WHAT IF JOY WERE HEAVIER?", explain:"give delight weight and consequence"},
+    {instr:"ASK: WHAT IF GRIEF WERE LIGHTER?", explain:"let sorrow move without sinking"},
+    {instr:"MAKE THE BOUNDARY HOSPITABLE", explain:"turn edges into thresholds"},
+    {instr:"INVITE A MOTH AND LEARN", explain:"follow what is drawn to the light"},
+    {instr:"DRAW WITH CONDENSATION ON GLASS", explain:"let breath become a line"},
+    {instr:"BORROW A RULE FROM KINTSUGI: HONOR THE BREAK", explain:"repair as revelation, not disguise"},
+    {instr:"ALLOW THE WORK TO BE CARRIED", explain:"touch turns objects into memory"},
+    {instr:"LET ONE ELEMENT WANDER DAILY", explain:"small drift keeps the system alive"},
+    {instr:"INSTALL A RITUAL FOR OPENING AND CLOSING", explain:"beginnings and endings shape attention"},
+    {instr:"REPLACE OWNERSHIP WITH LENDING", explain:"value flows when it circulates"},
+    {instr:"ASK: WHERE DOES THIS WANT TO LIVE?", explain:"site is part of the meaning"},
+    {instr:"GIVE THE WORK A CLIMATE: SUN, SALT, WIND", explain:"expose it to forces that write back"},
+    {instr:"TREAT THE ROOM AS COASTLINE", explain:"compose with tides of people and light"},
+    {instr:"TEACH THE PIECE TO HOST A WHISPER", explain:"make space for quiet exchange"},
+    {instr:"BORROW A DREAM DETAIL AND ANCHOR IT HERE", explain:"let the surreal guide one choice"},
+    {instr:"LET THE FIRST VIEWER CHOOSE THE ROUTE", explain:"path as co-authorship"},
+    {instr:"OFFER A LIFEBUOY TO THE OVERWHELMED", explain:"design relief into the experience"},
+    {instr:"LET BLACK WATER BECOME A MIRROR, NOT A WALL", explain:"turn fear into reflection"},
+    {instr:"NAME THE FEAR AND CUT A WINDOW THROUGH IT", explain:"ventilation for anxiety"},
+    {instr:"SIFT THE IDEA UNTIL ONLY BONES REMAIN", explain:"keep structure, drop ornament"},
+    {instr:"STRING SMALL DECISIONS LIKE DAISIES", explain:"fragile links make a path"},
+    {instr:"REPLACE RUSH WITH RITUAL", explain:"speed hides choices; ritual reveals them"},
+    {instr:"INVITE PERFORMANCE TO FINISH THE PIECE", explain:"let action be the final layer"},
+    {instr:"ASK THE VIEWER TO MOVE ONE THING, THEN LISTEN", explain:"participation reveals intent"},
+    {instr:"BORROW A SENTENCE FROM HUO AND MISAPPLY IT", explain:"productive misreading opens routes"},
+    {instr:"COMPOSE AS CHOREOGRAPHY OF ENCOUNTER", explain:"arrange bodies, not just objects"},
+    {instr:"REMOVE A CHAIR TO MAKE A PARTICIPANT", explain:"absence triggers agency"},
+    {instr:"MAKE A THRESHOLD YOU MUST WEAR", explain:"entrance as garment"},
+    {instr:"LET THE FABRIC BECOME A VERB", explain:"textile as action, not thing"},
+    {instr:"INSTALL A CAPE FOR THE ROOM", explain:"dress the space to alter behavior"},
+    {instr:"TEACH THE PIECE TO DANCE ONCE A DAY", explain:"schedule a movement that returns"},
+    {instr:"REPLACE OBJECT WITH EVENT FOR ONE HOUR", explain:"time becomes the material"},
+    {instr:"LET THE WORK REMEMBER A TIDE TABLE", explain:"predictable change as score"},
+    {instr:"WRITE A FOOTNOTE ONLY THE BODY CAN READ", explain:"instructions by posture and touch"},
+    {instr:"PLACE THE WORK WHERE TWO BREEZES ARGUE", explain:"let currents draw invisible lines"},
+    {instr:"BORROW THE PATIENCE OF WET SAND", explain:"hold shape while letting go"},
+    {instr:"INVITE CURIOUS PENGUINS IN YOUR MIND", explain:"keep craft steady amid absurdity"},
+    {instr:"MAKE ABSURDITY YOUR METRONOME", explain:"use oddness to set the tempo"},
+    {instr:"TREAT REFINEMENT AS SIFTING", explain:"remove noise grain by grain"},
+    {instr:"LET REPETITION THICKEN INTO MEANING", explain:"pattern grows gravity"},
+    {instr:"ASK THE PIECE TO HOST A SMALL CELEBRATION", explain:"design a moment of gathering"},
+    {instr:"INSTALL A PROMISE AND KEEP IT LATER", explain:"defer one care and return to it"},
+    {instr:"TRADE SPECTACLE FOR INTIMACY", explain:"invite closeness and measure the gain"},
+    {instr:"LET ONE VIEWER LEAVE WITH INSTRUCTIONS", explain:"send the work out through people"},
+    {instr:"INSTALL THE WORK SO THAT DUSK COMPLETES IT", explain:"time-of-day as collaborator"},
+    {instr:"BORROW A SUPERSTITION AND SET IT FREE", explain:"transform belief into play"},
+    {instr:"WRITE A SENTENCE YOU WILL ERASE TOMORROW", explain:"practice attachment and release"},
+    {instr:"MAKE THE LAST TOUCH AN ACT OF CARE", explain:"endings teach how to see"},
+    {instr:"REPLACE CERTAINTY WITH A MAP OF MAYBES", explain:"navigation over answers"},
+    {instr:"INVITE THE THRESHOLD TO BE POROUS", explain:"let edges breathe"},
+    {instr:"COMPOSE WITH ECHOES FROM ANOTHER ROOM", explain:"indirect sound as structure"},
+    {instr:"WELCOME BEING MISUNDERSTOOD", explain:"openness beats accuracy"},
+    {instr:"ASK: WHAT IF THE AUDIENCE WERE WEATHER?", explain:"design for fronts, drifts, lulls"},
+    {instr:"LET COINCIDENCE CHOOSE A COLLABORATOR", explain:"accept the partner that arrives"},
+    {instr:"INSTALL A SOFT REFUSAL", explain:"say no gently but clearly"},
+    {instr:"REPLACE CLOSURE WITH RETURN", explain:"let endings loop back"},
+    {instr:"GIVE THE PIECE A QUESTION TO GUARD", explain:"mystery with responsibility"},
+    {instr:"BORROW A RULE FROM TIDES: LEAVE TRACES", explain:"arrive, recede, and mark"},
+    {instr:"HOST A TINY ACCIDENT AND FRAME IT", explain:"treat chance with respect"},
+    {instr:"SET THE WORK TO THE TEMPO OF WALKING WITH A FRIEND", explain:"conversation pace as metronome"},
+    {instr:"LET COMFORT ARRIVE LATE", explain:"earn ease after attention"},
+    {instr:"HIDE A CORRIDOR BEHIND A SIMPLE TURN", explain:"reward curiosity with path"},
+    {instr:"OFFER A CHOICE THAT CHANGES NOTHING AND EVERYTHING", explain:"perception is the lever"},
+    {instr:"MAKE THE WORK PRACTICE KINDNESS TOWARD THE ROOM", explain:"care for context is content"},
+    {instr:"INVITE THE AUDIENCE TO CARRY THE ENDING", explain:"completion travels outward"},
+    {instr:"TEACH THE PIECE TO SAY: I AM STILL BECOMING", explain:"leave room for future growth"}
   ];
 
   var used = new Set();
   var card = document.getElementById('card');
   var btn = document.getElementById('btn');
-  var progress = document.getElementById('progress');
-
-  function updateProgress(){
-    progress.textContent = used.size + " / " + prompts.length;
-  }
 
   function pick(){
     if(prompts.length === 0) return null;
-    if(used.size === prompts.length) used.clear(); // reshuffle after full run
+    if(used.size === prompts.length) used.clear(); // full run done → reshuffle
     var i;
     do { i = Math.floor(Math.random()*prompts.length); } while(used.has(i));
     used.add(i);
-    updateProgress();
     return prompts[i];
   }
 
@@ -92,22 +146,20 @@
     if(!p) return;
     card.innerHTML =
       '<div class="instr">'+ (p.instr||'').toUpperCase() +'</div>'+
-      '<div class="explain">'+ String(p.explain||'').toLowerCase() +'</div>'+
-      '<div class="progress" id="progress">'+ used.size +' / '+ prompts.length +'</div>';
+      '<div class="explain">'+ String(p.explain||'').toLowerCase() +'</div>';
   }
 
   // init
-  updateProgress();
-  draw(); // show first card
+  draw();
   btn.addEventListener('click', draw);
   document.addEventListener('keydown', function(e){
-    if(e.code==='Space'){ e.preventDefault(); draw(); }
-    if(e.key==='Tab'){ e.preventDefault(); draw(); } // also on Tab as requested
+    if(e.code==='Space' || e.key==='Tab'){ e.preventDefault(); draw(); }
   });
 })();
 </script>
 </body>
 </html>
+
 
 
 
