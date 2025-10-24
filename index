@@ -3,126 +3,111 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>Cards — All</title>
+<title>Studio Prompts</title>
 <style>
-  :root{ --bg:#F2EEE9; --fg:#000; --muted:#4d4d4d; --track:0.08em; }
-  html,body{margin:0}
+  :root{
+    --bg:#F2EEE9; --fg:#000; --muted:#4d4d4d;
+    --track:0.08em; --gap:80px;
+  }
+  html,body{height:100%;margin:0}
   body{
     background:var(--bg); color:var(--fg);
     font-family:Futura,"Avenir Next",Avenir,"Helvetica Neue",Helvetica,Arial,sans-serif;
     letter-spacing:var(--track);
+    display:grid; place-items:center; min-height:100vh;
   }
-  header{position:sticky;top:0;background:var(--bg);padding:16px 20px;border-bottom:1px solid #0001}
-  header h1{margin:0;font-size:16px;font-weight:500}
-  .wrap{max-width:1100px;margin:0 auto;padding:28px}
-  .grid{
-    display:grid;
-    grid-template-columns:repeat(auto-fill,minmax(280px,1fr));
-    gap:28px;
-  }
-  .card{
-    background:#fffefc;border:1px solid #0002;border-radius:16px;
-    padding:24px 22px; display:grid; gap:24px; min-height:220px;
-    box-shadow:0 1px 0 #0001, 0 8px 30px rgba(0,0,0,.05);
+  .text{
+    display:grid; justify-items:center; text-align:center;
+    gap:var(--gap); padding:var(--gap) 28px; max-width:900px;
   }
   .instr{
-    font-size:clamp(20px,2.4vw,28px);
-    font-weight:400; text-transform:uppercase; line-height:1.15;
-    letter-spacing:calc(var(--track)*1.5);
+    font-size:clamp(30px,7vw,60px);
+    font-weight:400; text-transform:uppercase;
+    line-height:1.12; letter-spacing:calc(var(--track)*1.5);
   }
   .explain{
-    font-size:16px; color:var(--muted); line-height:1.5;
-    letter-spacing:var(--track); text-transform:none;
+    font-size:clamp(14px,3.8vw,18px);
+    color:var(--muted); font-weight:400; line-height:1.5; max-width:800px;
+    text-transform:none; letter-spacing:var(--track);
   }
-  .meta{font-size:12px;color:#0008;letter-spacing:.06em}
-  .tools{display:flex;gap:10px;align-items:center}
-  .tools input{
-    width:100%;max-width:420px;padding:10px 12px;border:1px solid #0002;border-radius:999px;background:#fffefc;
-    font-family:inherit;letter-spacing:var(--track);
+  .progress{font-size:12px; color:#0009; letter-spacing:.06em}
+  button{
+    position:fixed; left:50%; bottom:30px; transform:translateX(-50%);
+    background:transparent; color:var(--fg);
+    border:1px solid var(--fg); border-radius:999px;
+    padding:12px 22px; font-family:inherit; font-size:16px;
+    letter-spacing:var(--track); cursor:pointer;
   }
-  .tools button{padding:10px 14px;border:1px solid #000;border-radius:999px;background:transparent;cursor:pointer;font-family:inherit;letter-spacing:var(--track)}
+  button:focus{outline:2px solid var(--fg); outline-offset:3px}
   @media (max-width:520px){
-    .wrap{padding:18px}
-    .grid{gap:18px}
-    .card{gap:20px;padding:20px}
+    :root{ --gap:64px; --track:0.07em; }
+    .text{ padding:56px 20px; }
+    button{ bottom:22px; padding:12px 20px; font-size:15px; }
   }
 </style>
 </head>
 <body>
-<header>
-  <div class="wrap">
-    <div class="tools">
-      <input id="q" type="search" placeholder="filter cards…" aria-label="filter" />
-      <button id="clear">clear</button>
-      <div class="meta" id="count"></div>
-    </div>
-  </div>
-</header>
-
-<main class="wrap">
-  <section id="grid" class="grid" aria-live="polite"></section>
-</main>
+  <main class="text" id="card">
+    <div class="instr">&nbsp;</div>
+    <div class="explain">&nbsp;</div>
+    <div class="progress" id="progress">0 / 0</div>
+  </main>
+  <button id="btn">new</button>
 
 <script>
-/* Paste your full list here. Each item: { instr: "...", explain: "..." } */
-const prompts = [
-  {instr:"ASK THE MATERIAL WHAT IT REFUSES", explain:"resistance reveals the form's boundary"},
-  {instr:"LET REPETITION BECOME TRANCE", explain:"when rhythm replaces intention, the work begins to breathe"},
-  {instr:"BEGIN AT THE EDGE, NOT THE CENTER", explain:"edges invite decisions; centers hide them"},
-  {instr:"INVITE THE BODY BEFORE THE MIND", explain:"understanding arrives through weight, balance, and reach"},
-  {instr:"LET SPACE FINISH THE SENTENCE", explain:"leave a gap and let the room write the rest"}
-  // ← add all remaining entries here (up to your 100/300)
-];
+(function(){
+  /* REPLACE THIS ARRAY WITH YOUR FULL LIST (100/300) */
+  var prompts = [
+    {instr:"ASK THE MATERIAL WHAT IT REFUSES", explain:"resistance reveals the form's boundary"},
+    {instr:"LET REPETITION BECOME TRANCE", explain:"when rhythm replaces intention, the work begins to breathe"},
+    {instr:"BEGIN AT THE EDGE, NOT THE CENTER", explain:"edges invite decisions; centers hide them"},
+    {instr:"INVITE THE BODY BEFORE THE MIND", explain:"understanding arrives through weight, balance, and reach"},
+    {instr:"LET SPACE FINISH THE SENTENCE", explain:"leave a gap and let the room write the rest"}
+    /* ← paste all remaining items here, format:
+       {instr:"YOUR INSTRUCTION IN ALL CAPS", explain:"your lowercase explanation"},
+    */
+  ];
 
-const grid = document.getElementById('grid');
-const count = document.getElementById('count');
-const q = document.getElementById('q');
-const clearBtn = document.getElementById('clear');
+  var used = new Set();
+  var card = document.getElementById('card');
+  var btn = document.getElementById('btn');
+  var progress = document.getElementById('progress');
 
-function cardTemplate(p, i){
-  const id = `c${i}`;
-  return `
-    <article class="card" id="${id}">
-      <div class="instr">${p.instr}</div>
-      <div class="explain">${String(p.explain||"").toLowerCase()}</div>
-      <div class="meta">#${i+1}</div>
-    </article>
-  `;
-}
-
-function render(list){
-  grid.innerHTML = list.map(cardTemplate).join('');
-  count.textContent = `${list.length} / ${prompts.length}`;
-}
-
-function filterList(term){
-  term = term.trim().toLowerCase();
-  if(!term) return prompts;
-  return prompts.filter(p =>
-    (p.instr||"").toLowerCase().includes(term) ||
-    (p.explain||"").toLowerCase().includes(term)
-  );
-}
-
-q.addEventListener('input', ()=> render(filterList(q.value)));
-clearBtn.addEventListener('click', ()=>{ q.value = ""; render(prompts); q.focus(); });
-
-/* Optional: scroll to hash index like #23 */
-function scrollToHash(){
-  const h = location.hash.replace('#','');
-  if(!h) return;
-  const idx = parseInt(h,10);
-  if(!isNaN(idx) && idx>=0 && idx<prompts.length){
-    const el = document.getElementById(`c${idx}`);
-    if(el){ el.scrollIntoView({behavior:'smooth', block:'center'}); el.style.outline='2px solid #000'; setTimeout(()=>el.style.outline='none',1200); }
+  function updateProgress(){
+    progress.textContent = used.size + " / " + prompts.length;
   }
-}
 
-render(prompts);
-scrollToHash();
-window.addEventListener('hashchange', scrollToHash);
+  function pick(){
+    if(prompts.length === 0) return null;
+    if(used.size === prompts.length) used.clear(); // reshuffle after full run
+    var i;
+    do { i = Math.floor(Math.random()*prompts.length); } while(used.has(i));
+    used.add(i);
+    updateProgress();
+    return prompts[i];
+  }
+
+  function draw(){
+    var p = pick();
+    if(!p) return;
+    card.innerHTML =
+      '<div class="instr">'+ (p.instr||'').toUpperCase() +'</div>'+
+      '<div class="explain">'+ String(p.explain||'').toLowerCase() +'</div>'+
+      '<div class="progress" id="progress">'+ used.size +' / '+ prompts.length +'</div>';
+  }
+
+  // init
+  updateProgress();
+  draw(); // show first card
+  btn.addEventListener('click', draw);
+  document.addEventListener('keydown', function(e){
+    if(e.code==='Space'){ e.preventDefault(); draw(); }
+    if(e.key==='Tab'){ e.preventDefault(); draw(); } // also on Tab as requested
+  });
+})();
 </script>
 </body>
 </html>
+
 
 
