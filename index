@@ -4,39 +4,25 @@
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>Studio Prompts</title>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
 <style>
-  :root{ --bg:#F2EEE9; --fg:#000; --muted:#4d4d4d; --track:0.068em; --gap:80px; }
+  :root{--bg:#F2EEE9;--fg:#000;--muted:#4d4d4d;--track:0.068em;--gap:80px}
   html,body{height:100%;margin:0}
   body{
-    background:var(--bg); color:var(--fg);
+    background:var(--bg);color:var(--fg);
     font-family:Futura,"Avenir Next",Avenir,"Helvetica Neue",Helvetica,Arial,sans-serif;
-    letter-spacing:var(--track);
-    display:grid; place-items:center; min-height:100vh;
+    letter-spacing:var(--track);display:grid;place-items:center;min-height:100vh
   }
-  .text{
-    display:grid; justify-items:center; text-align:center;
-    gap:var(--gap); padding:var(--gap) 28px; max-width:900px;
-  }
-  .instr{
-    font-size:clamp(30px,7vw,60px); font-weight:400; text-transform:uppercase;
-    line-height:1.12; letter-spacing:calc(var(--track)*1.5);
-  }
-  .explain{
-    font-size:clamp(14px,3.8vw,18px); color:var(--muted); font-weight:400;
-    line-height:1.5; max-width:800px; text-transform:none; letter-spacing:var(--track);
-  }
+  .text{display:grid;justify-items:center;text-align:center;gap:var(--gap);padding:var(--gap) 28px;max-width:900px}
+  .instr{font-size:clamp(30px,7vw,60px);font-weight:400;text-transform:uppercase;line-height:1.12;letter-spacing:calc(var(--track)*1.5)}
+  .explain{font-size:clamp(14px,3.8vw,18px);color:var(--muted);line-height:1.5;max-width:800px}
   button{
-    position:fixed; left:50%; bottom:30px; transform:translateX(-50%);
-    background:#F2EEE9; color:#000; border:1px solid #000; border-radius:0;
-    padding:8px 20px; font-family:inherit; font-size:15px; letter-spacing:var(--track);
-    cursor:pointer; transition:all .3s ease;
+    position:fixed;left:50%;bottom:30px;transform:translateX(-50%);
+    background:#F2EEE9;color:#000;border:1px solid #000;border-radius:0;
+    padding:8px 20px;font:inherit;letter-spacing:var(--track);cursor:pointer;transition:all .3s
   }
-  button:hover{ background:#000; color:#F2EEE9; border-color:#000; }
-  @media (max-width:520px){
-    :root{ --gap:64px; --track:0.06em; }
-    .text{ padding:56px 20px; }
-    button{ bottom:22px; padding:8px 18px; font-size:14px; }
-  }
+  button:hover{background:#000;color:#F2EEE9;border-color:#000}
+  @media (max-width:520px){:root{--gap:64px;--track:0.06em}.text{padding:56px 20px}button{bottom:22px;padding:8px 18px;font-size:14px}}
 </style>
 </head>
 <body>
@@ -127,10 +113,8 @@
 
   function pick(){
     if(used.size === prompts.length) used.clear();
-    let i;
-    do { i = Math.floor(Math.random()*prompts.length); } while(used.has(i));
-    used.add(i);
-    return prompts[i];
+    let i; do { i = Math.floor(Math.random()*prompts.length); } while(used.has(i));
+    used.add(i); return prompts[i];
   }
 
   function draw(){
@@ -149,6 +133,7 @@
 </script>
 </body>
 </html>
+
 
 
 
